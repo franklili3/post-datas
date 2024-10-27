@@ -44,15 +44,18 @@ header2 = {
        "Authorization": token
 }
 
-post_path2 = '/api/collections/bitcoin_strategy_backtest_cn_stock_performance/records'
-bitcoin_strategy_backtest_cn_stock_performance = pd.read_csv("bitcoin_strategy_backtest_cn_stock_performance.csv")
-for index, row in bitcoin_strategy_backtest_cn_stock_performance.iterrows():
-
+post_path2 = '/api/collections/bitcoin_strategy_backtest_returns/records'
+bitcoin_strategy_backtest_returns = pd.read_csv("bitcoin_strategy_backtest_returns.csv",  parse_dates=['date'])
+bitcoin_strategy_backtest_returns = bitcoin_strategy_backtest_returns[bitcoin_strategy_backtest_returns['date'] >= '2023-11-15']
+bitcoin_strategy_backtest_returns['date'] = bitcoin_strategy_backtest_returns['date'].dt.strftime('%Y-%m-%d')
+bitcoin_strategy_backtest_returns = bitcoin_strategy_backtest_returns[['returns', 'portfolio_value', 'cum_return', 'instrument', 'date']]
+for index, row in bitcoin_strategy_backtest_returns.iterrows():
+    
     row_json2 = row.to_json()
     print('row_json: ', row_json2)
-    row_json2_split = row_json2.split('}')
-    data2 = row_json2_split[0] + '}'
-    print('data2: ', data2)
+    #row_json2_split = row_json2.split('}')
+    data2 = row_json2
+    #print('data2: ', data2)
     post_url = home_url + post_path2
     response2 = requests.post(post_url, headers=header2, data=data2)
     response2_json = response2.json()
